@@ -1,0 +1,74 @@
+---
+# L3 Spine Switches (L3 gateway layer - hosts SVIs)
+l3spine:
+  defaults:
+    platform: vEOS-lab
+    bgp_as: 65030
+    loopback_ipv4_pool: 10.255.30.0/24
+    mlag_interfaces: [Ethernet15, Ethernet16]
+    mlag_peer_ipv4_pool: 10.130.1.0/22
+    mlag_peer_l3_ipv4_pool: 10.230.4.0/22
+    virtual_router_mac_address: 00:1c:73:00:00:99
+  node_groups:
+    - group: c3-spines
+      mlag: true
+      nodes:
+        - name: c3-spine1
+          id: 130
+          mgmt_ip: 192.168.0.115/24
+        - name: c3-spine2
+          id: 131
+          mgmt_ip: 192.168.0.116/24
+
+# Leaf switches - pure L2 access layer
+l2leaf:
+  defaults:
+    platform: vEOS-lab
+    uplink_interfaces: [Ethernet1, Ethernet2]
+    uplink_switches: [c3-spine1, c3-spine2]
+    mlag_interfaces: [Ethernet5, Ethernet6]
+    mlag_peer_ipv4_pool: 10.130.30.0/22
+    spanning_tree_mode: mstp
+    spanning_tree_priority: 16384
+    mlag: true
+  node_groups:
+    - group: mlag31
+      nodes:
+        - name: c3-leaf1
+          id: 132
+          mgmt_ip: 192.168.0.131/24
+          uplink_switch_interfaces: [Ethernet1, Ethernet1]
+        - name: c3-leaf2
+          id: 133
+          mgmt_ip: 192.168.0.132/24
+          uplink_switch_interfaces: [Ethernet2, Ethernet2]
+    - group: mlag32
+      nodes:
+        - name: c3-leaf3
+          id: 134
+          mgmt_ip: 192.168.0.133/24
+          uplink_switch_interfaces: [Ethernet3, Ethernet3]
+        - name: c3-leaf4
+          id: 135
+          mgmt_ip: 192.168.0.134/24
+          uplink_switch_interfaces: [Ethernet4, Ethernet4]
+    - group: mlag33
+      nodes:
+        - name: c3-leaf5
+          id: 136
+          mgmt_ip: 192.168.0.135/24
+          uplink_switch_interfaces: [Ethernet5, Ethernet5]
+        - name: c3-leaf6
+          id: 137
+          mgmt_ip: 192.168.0.136/24
+          uplink_switch_interfaces: [Ethernet6, Ethernet6]
+    - group: c3-borderleafs
+      nodes:
+        - name: c3-borderleaf1
+          id: 138
+          mgmt_ip: 192.168.0.137/24
+          uplink_switch_interfaces: [Ethernet7, Ethernet7]
+        - name: c3-borderleaf2
+          id: 139
+          mgmt_ip: 192.168.0.138/24
+          uplink_switch_interfaces: [Ethernet8, Ethernet8]
